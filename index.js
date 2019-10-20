@@ -47,7 +47,7 @@ async function pollForLiveStreamData() {
                             avatar_url: 'https://yt3.ggpht.com/a/AGF-l7__zvPRgglwpeA85-NPjkxRlhi46IG3wKdwKg=s288-c-k-c0xffffffff-no-rj-mo',
                             content: `Richlife is LIVE. **${element.snippet.title}**. Channel: ${youtubeChannel.channelUrl}`
                         }
-                        postToDiscord(discordObj).catch(error => console.log('Discord POST failed.', JSON.stringify(discordObj)));
+                        postToDiscord(discordObj);
                     }
                 });
             }
@@ -66,7 +66,7 @@ async function postToDiscord(json) {
         redirect: 'follow',
         referrer: 'no-referrer',
         body: JSON.stringify(json)
-    });
+    }).catch(error => console.log('Discord POST failed.', JSON.stringify(json)));
     return await response.json();
 }
 
