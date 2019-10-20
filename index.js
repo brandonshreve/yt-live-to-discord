@@ -47,7 +47,7 @@ async function pollForLiveStreamData() {
                             avatar_url: 'https://yt3.ggpht.com/a/AGF-l7__zvPRgglwpeA85-NPjkxRlhi46IG3wKdwKg=s288-c-k-c0xffffffff-no-rj-mo',
                             content: `Richlife is LIVE. **${element.snippet.title}**. Channel: ${youtubeChannel.channelUrl}`
                         }
-                        postToDiscord(discordObj);
+                        postToDiscord(discordObj).catch(error => console.log('Discord POST failed.', JSON.stringify(discordObj)));
                     }
                 });
             }
@@ -67,13 +67,13 @@ async function postToDiscord(json) {
         referrer: 'no-referrer',
         body: JSON.stringify(json)
     });
-    return await response.json(); // parses JSON response into native JavaScript objects
+    return await response.json();
 }
 
 app.get('/', (req, res) => res.send('Hello World!'));
 app.listen(port, () => {
     console.log(`App listening on port ${port}!`)
-    setInterval(pollForLiveStreamData, 900000);
+    setInterval(pollForLiveStreamData, 300000);
 })
 
 
