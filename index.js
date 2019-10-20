@@ -31,7 +31,6 @@ let activeLiveStreams = new Set();
 
 async function pollForLiveStreamData() {
     try {
-        console.log(youtubeApiKey);
         for(const youtubeChannel of youtubeChannels) {
             console.log('Polling for ', JSON.stringify(youtubeChannel));
             const response = await fetch(`${youtubeApiUrl}&channelId=${youtubeChannel.channelId}&key=${youtubeApiKey}`);
@@ -39,7 +38,6 @@ async function pollForLiveStreamData() {
 
             if(myJson && myJson.pageInfo && myJson.pageInfo.totalResults > 0) {
                 console.log('Found active stream for ', youtubeChannel.channelId);
-                console.log(myJson.items);
                 myJson.items.forEach(element => {
                     if(!activeLiveStreams.has(element.id.videoId)) {
                         activeLiveStreams.add(element.id.videoId);
@@ -49,7 +47,6 @@ async function pollForLiveStreamData() {
                             avatar_url: 'https://yt3.ggpht.com/a/AGF-l7__zvPRgglwpeA85-NPjkxRlhi46IG3wKdwKg=s288-c-k-c0xffffffff-no-rj-mo',
                             content: `Richlife is LIVE. **${element.snippet.title}**. Channel: ${youtubeChannel.channelUrl}`
                         }
-                        console.log(discordApiUrl)
                         postToDiscord(discordObj);
                     }
                 });
@@ -61,21 +58,22 @@ async function pollForLiveStreamData() {
 }
 
 async function postToDiscord(json) {
-      // Default options are marked with *
     const response = await fetch(discordApiUrl, {
-        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        method: 'POST',
         headers: {
         'Content-Type': 'application/json'
         },
-        redirect: 'follow', // manual, *follow, error
-        referrer: 'no-referrer', // no-referrer, *client
-        body: JSON.stringify(json) // body data type must match "Content-Type" header
+        redirect: 'follow',
+        referrer: 'no-referrer',
+        body: JSON.stringify(json)
     });
     return await response.json(); // parses JSON response into native JavaScript objects
 }
 
-setInterval(pollForLiveStreamData, 900000);
 app.get('/', (req, res) => res.send('Hello World!'));
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.listen(port, () => {
+    console.log(`App listening on port ${port}!`)
+    setInterval(pollForLiveStreamData, 900000);
+})
 
 
