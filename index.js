@@ -34,6 +34,8 @@ async function pollForLiveStreamData() {
             const myJson = await response.json();
 
             if(myJson && myJson.pageInfo && myJson.pageInfo.totalResults > 0) {
+                console.log('Found active stream for ', youtubeChannel.channelId);
+                console.log(myJson.items);
                 myJson.items.forEach(element => {
                     if(!activeLiveStreams.has(element.id.videoId)) {
                         activeLiveStreams.add(element.id.videoId);
@@ -41,8 +43,9 @@ async function pollForLiveStreamData() {
                         const discordObj = {
                             username: 'Dumpster LIVE',
                             avatar_url: 'https://yt3.ggpht.com/a/AGF-l7__zvPRgglwpeA85-NPjkxRlhi46IG3wKdwKg=s288-c-k-c0xffffffff-no-rj-mo',
-                            content: `Richlife is LIVE. Title: **${element.snippet.title}**. Channel: (${youtubeChannel.channelUrl})`
+                            content: `Richlife is LIVE. **${element.snippet.title}**. Channel: ${youtubeChannel.channelUrl}`
                         }
+                        console.log(discordApiUrl)
                         postToDiscord(discordObj);
                     }
                 });
@@ -68,6 +71,7 @@ async function postToDiscord(json) {
 }
 
 setInterval(pollForLiveStreamData, 900000);
+
 
 
 
