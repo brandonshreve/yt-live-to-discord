@@ -75,7 +75,7 @@ async function postToDiscord(json) {
 }
 
 setInterval(pollForLiveStreamData, 900000);
-app.get('/', (req, res) => res.send('Hello World!', JSON.stringify(youtubeChannels)));
+app.get('/', (req, res) => res.send('Hello World!'));
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 
