@@ -2,6 +2,7 @@ const fetch = require("node-fetch");
 const express = require('express')
 const app = express();
 const port = process.env.PORT || 3000;
+const herokuApp = process.env.HEROKU_APP || null;
 
 const youtubeApiKey = process.env.YOUTUBE_API_KEY;
 const youtubeApiUrl = 'https://www.googleapis.com/youtube/v3/search?part=snippet&eventType=live&type=video';
@@ -78,10 +79,22 @@ async function postToDiscord(json) {
     console.log('Discord response', content); 
 }
 
-app.get('/', (req, res) => res.send('Hello World!'));
+async function herokuKeepAlive() {
+    try {
+        const response = await fetch(herokuApp);
+        console.log('Heroku Keep-Alive Success')
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+app.get('/', (req, res) => res.send('Shhh! Im busy monitoring Youtube Channels.'));
 app.listen(port, () => {
     console.log(`App listening on port ${port}!`)
     setInterval(fetchLiveStreamStatus, 300000);
+    if(herokuApp) {
+        setInterval(herokuKeepAlive, 600000); // Heroku will sleep the app if it's not accessed, so access itself to keep-alive
+    }
 })
 
 
