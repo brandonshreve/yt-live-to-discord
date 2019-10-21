@@ -58,16 +58,19 @@ async function pollForLiveStreamData() {
 }
 
 async function postToDiscord(json) {
-    const response = await fetch(discordApiUrl, {
+    const resp = fetch(discordApiUrl, {
         method: 'POST',
         headers: {
-        'Content-Type': 'application/json'
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
         },
         redirect: 'follow',
         referrer: 'no-referrer',
         body: JSON.stringify(json)
-    }).catch(error => console.log('Discord POST failed.', JSON.stringify(json)));
-    return await response.json();
+    }).catch(error => console.log('Discord POST failed.', JSON.stringify(json), error));
+
+    const content = await resp.json();
+    console.log('Discord response', content); 
 }
 
 app.get('/', (req, res) => res.send('Hello World!'));
