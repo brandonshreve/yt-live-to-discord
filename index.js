@@ -29,17 +29,20 @@ const youtubeChannels = [
 
 let activeLiveStreams = new Set();
 
-async function pollForLiveStreamData() {
+async function fetchLiveStreamStatus() {
     try {
         for(const youtubeChannel of youtubeChannels) {
             console.log('Polling for ', JSON.stringify(youtubeChannel));
-            const response = await fetch(`${youtubeApiUrl}&channelId=${youtubeChannel.channelId}&key=${youtubeApiKey}`);
+            const url = `${youtubeApiUrl}&channelId=${youtubeChannel.channelId}&key=${youtubeApiKey}`;
+            const response = await fetch(url);
             const myJson = await response.json();
-
+            
+            console.log('YouTube Response', JSON.stringify(myJson));
             if(myJson && myJson.pageInfo && myJson.pageInfo.totalResults > 0) {
                 console.log('Found active stream for ', youtubeChannel.channelId);
                 myJson.items.forEach(element => {
                     if(!activeLiveStreams.has(element.id.videoId)) {
+                        console.log(element);
                         activeLiveStreams.add(element.id.videoId);
     
                         const discordObj = {
@@ -78,7 +81,7 @@ async function postToDiscord(json) {
 app.get('/', (req, res) => res.send('Hello World!'));
 app.listen(port, () => {
     console.log(`App listening on port ${port}!`)
-    setInterval(pollForLiveStreamData, 300000);
+    setInterval(fetchLiveStreamStatus, 300000);
 })
 
 
