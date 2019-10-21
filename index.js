@@ -48,6 +48,8 @@ async function pollForLiveStreamData() {
                             content: `Richlife is LIVE. **${element.snippet.title}**. Channel: ${youtubeChannel.channelUrl}`
                         }
                         postToDiscord(discordObj);
+                    } else {
+                        console.log(`Already alerted for this livestream ${element.id.videoId}. Skipping.`);
                     }
                 });
             }
