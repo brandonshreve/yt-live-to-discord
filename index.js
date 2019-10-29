@@ -3,6 +3,7 @@ const express = require('express')
 const app = express();
 const port = process.env.PORT || 3000;
 const herokuApp = process.env.HEROKU_APP || null;
+const youtubeFetchTimeout = 1800000;
 
 const youtubeApiKey = process.env.YOUTUBE_API_KEY;
 const youtubeApiUrl = 'https://www.googleapis.com/youtube/v3/search?part=snippet&eventType=live&type=video';
@@ -32,7 +33,8 @@ let activeLiveStreams = new Set();
 
 async function fetchLiveStreamStatus() {
     try {
-        for(const youtubeChannel of youtubeChannels) {
+        // for(const youtubeChannel of youtubeChannels) {
+            const youtubeChannel = youtubeChannels[0];
             console.log('Polling for ', JSON.stringify(youtubeChannel));
             const url = `${youtubeApiUrl}&channelId=${youtubeChannel.channelId}&key=${youtubeApiKey}`;
             const response = await fetch(url);
@@ -57,7 +59,7 @@ async function fetchLiveStreamStatus() {
                     }
                 });
             }
-        }
+        // }
     } catch (error) {
         console.error(error);
     }
@@ -91,7 +93,7 @@ async function herokuKeepAlive() {
 app.get('/', (req, res) => res.send('Shhh! Im busy monitoring Youtube Channels.'));
 app.listen(port, () => {
     console.log(`App listening on port ${port}!`)
-    setInterval(fetchLiveStreamStatus, 300000);
+    setInterval(fetchLiveStreamStatus, youtubeFetchTimeout);
     if(herokuApp) {
         setInterval(herokuKeepAlive, 600000); // Heroku will sleep the app if it's not accessed, so access itself to keep-alive
     }
