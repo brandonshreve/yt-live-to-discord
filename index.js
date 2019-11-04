@@ -3,7 +3,7 @@ const express = require('express')
 const app = express();
 const port = process.env.PORT || 3000;
 const herokuApp = process.env.HEROKU_APP || null;
-const youtubeFetchTimeout = 1800000;
+const youtubeFetchTimeout = 900000;
 
 const youtubeApiKey = process.env.YOUTUBE_API_KEY;
 const youtubeApiUrl = 'https://www.googleapis.com/youtube/v3/search?part=snippet&eventType=live&type=video';
